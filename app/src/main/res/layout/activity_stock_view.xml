@@ -5,15 +5,18 @@
     android:id="@+id/linearLayout2"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/background">
+    android:background="@drawable/grey_background2">
 
     <TextView
         android:id="@+id/title"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="669dp"
         android:text="Stock View"
         android:textAlignment="center"
+        android:textColor="@color/black"
         android:textSize="20pt"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -22,8 +25,7 @@
         android:id="@+id/listView"
         android:layout_width="370dp"
         android:layout_height="584dp"
-        android:divider="@color/Light_Blue"
-        android:dividerHeight="15.0sp"
+        android:dividerHeight="5.0sp"
         app:layout_constraintBottom_toTopOf="@+id/buttons_layout"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

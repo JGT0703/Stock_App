@@ -7,8 +7,10 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
 
@@ -18,6 +20,8 @@ class MainActivity : AppCompatActivity() {
     private lateinit var passwordEditText: EditText
     private lateinit var loginButton: Button
     private lateinit var registerButton: Button
+    private lateinit var mAuth: FirebaseAuth
+    private lateinit var mDatabase: DatabaseReference
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -28,39 +32,23 @@ class MainActivity : AppCompatActivity() {
         loginButton = findViewById(R.id.button_click)
         registerButton = findViewById(R.id.registerBtn)
 
+        mAuth = FirebaseAuth.getInstance()
+        mDatabase = FirebaseDatabase.getInstance().reference
+
         loginButton.setOnClickListener {
             val email = emailEditText.text.toString()
             val password = passwordEditText.text.toString()
 
             if (validateInput(email, password)) {
-                val database = FirebaseDatabase.getInstance()
-                val usersRef = database.getReference("Users")
-                val context = this@MainActivity
-
-                usersRef.addListenerForSingleValueEvent(object : ValueEventListener {
-                    override fun onDataChange(dataSnapshot: DataSnapshot) {
-                        var userFound = false
-
-                        for (userSnapshot in dataSnapshot.children) {
-                            val user = userSnapshot.getValue(User::class.java)
-
-                            if (user != null && user.email == email && user.password == password) {
-                                userFound = true
-                                val intent = Intent(context, Home_view::class.java)
-                                context.startActivity(intent)
-                                break
-                            }
-                        }
-
-                        if (!userFound) {
-                            Toast.makeText(context, "User not found", Toast.LENGTH_SHORT).show()
+                mAuth.signInWithEmailAndPassword(email, password)
+                    .addOnCompleteListener(this) { task ->
+                        if (task.isSuccessful) {
+                            val user = mAuth.currentUser
+                            getUserType(user!!.uid, email, password)
+                        } else {
+                            Toast.makeText(this, "Authentication failed", Toast.LENGTH_SHORT).show()
                         }
                     }
-
-                    override fun onCancelled(databaseError: DatabaseError) {
-                        Toast.makeText(context, "Error: $databaseError", Toast.LENGTH_SHORT).show()
-                    }
-                })
             }
         }
 
@@ -83,6 +71,36 @@ class MainActivity : AppCompatActivity() {
 
         return true
     }
-}
 
-data class User(val email: String, val password: String)
+    private fun getUserType(uid: String, email: String, password: String) {
+        mDatabase.child("Users").child(uid).child("User Information").addListenerForSingleValueEvent(object : ValueEventListener {
+            override fun onDataChange(dataSnapshot: DataSnapshot) {
+                if (dataSnapshot.exists()) {
+                    val userTypeObject = dataSnapshot.child("userType")
+                    if (userTypeObject.exists()) {
+                        val userType = userTypeObject.value as String
+                        if (userType != null) {
+                            if (userType == "Admin") {
+                                val intent = Intent(this@MainActivity, Home_View_Admin::class.java)
+                                startActivity(intent)
+                            } else if (userType == "Customer") {
+                                val intent = Intent(this@MainActivity, Home_View_Customer::class.java)
+                                startActivity(intent)
+                            }
+                        } else {
+                            Toast.makeText(this@MainActivity, "User type not found", Toast.LENGTH_SHORT).show()
+                        }
+                    } else {
+                        Toast.makeText(this@MainActivity, "User type not found", Toast.LENGTH_SHORT).show()
+                    }
+                } else {
+                    Toast.makeText(this@MainActivity, "User not found", Toast.LENGTH_SHORT).show()
+                }
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+                Toast.makeText(this@MainActivity, "Error getting user type", Toast.LENGTH_SHORT).show()
+            }
+        })
+    }
+}

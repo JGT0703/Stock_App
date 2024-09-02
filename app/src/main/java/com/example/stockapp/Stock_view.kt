@@ -14,6 +14,7 @@ import android.widget.ListView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.DatabaseReference
@@ -58,7 +59,7 @@ class Stock_view : AppCompatActivity() {
 
         val backClick = findViewById<Button>(R.id.back_button)
         backClick.setOnClickListener {
-            val intent = Intent(this, Home_view::class.java)
+            val intent = Intent(this, Home_View_Admin::class.java)
             startActivity(intent)
         }
         val addClick = findViewById<Button>(R.id.add_item)
@@ -115,7 +116,8 @@ class StockAdapter(private val context: Stock_view, private val stockList: Array
                 if (quantity.isNotEmpty() && quantity.toInt() > 0) {
                     val availableAmount = stockList[position].amount.toInt()
                     if (quantity.toInt() <= availableAmount) {
-                        val cartDatabaseReference = FirebaseDatabase.getInstance().getReference("Cart")
+                        val uid = FirebaseAuth.getInstance().currentUser!!.uid
+                        val cartDatabaseReference = FirebaseDatabase.getInstance().getReference("Users").child(uid).child("Cart")
                         val itemId = cartDatabaseReference.push().key.toString()
                         val cartItem = CartItem(stockList[position].partName, stockList[position].brandName, quantity, stockList[position].price)
                         cartDatabaseReference.child(itemId).setValue(cartItem)

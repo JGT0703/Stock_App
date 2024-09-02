@@ -13,6 +13,7 @@ import android.widget.ListView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.DatabaseReference
@@ -25,6 +26,7 @@ class Cart_view : AppCompatActivity() {
     private lateinit var listView: ListView
     private lateinit var cartList: ArrayList<CartItem>
     private lateinit var totalPriceTextView: TextView
+    private lateinit var auth: FirebaseAuth
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -33,7 +35,9 @@ class Cart_view : AppCompatActivity() {
         listView = findViewById(R.id.listViewId)
         totalPriceTextView = findViewById(R.id.totalTextView)
 
-        databaseReference = FirebaseDatabase.getInstance().getReference("Cart")
+        auth = FirebaseAuth.getInstance()
+        val userId = auth.currentUser!!.uid
+        databaseReference = FirebaseDatabase.getInstance().getReference("Users").child(userId).child("Cart")
 
         cartList = ArrayList()
 
@@ -61,7 +65,7 @@ class Cart_view : AppCompatActivity() {
 
         val backButton = findViewById<Button>(R.id.continue_button)
         backButton.setOnClickListener {
-            val intent = Intent(this, Home_view::class.java)
+            val intent = Intent(this, Home_View_Customer::class.java)
             startActivity(intent)
         }
     }
@@ -112,7 +116,9 @@ class CartAdapter(private val context: Cart_view, private val cartList: ArrayLis
             amountTextView.text = newAmount
             notifyDataSetChanged()
 
-            val databaseReference = FirebaseDatabase.getInstance().getReference("Cart")
+            val auth = FirebaseAuth.getInstance()
+            val userId = auth.currentUser!!.uid
+            val databaseReference = FirebaseDatabase.getInstance().getReference("Users").child(userId).child("Cart")
             databaseReference.addListenerForSingleValueEvent(object : ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
                     for (dataSnapshot in snapshot.children) {
@@ -142,7 +148,9 @@ class CartAdapter(private val context: Cart_view, private val cartList: ArrayLis
         val builder = AlertDialog.Builder(context)
         builder.setMessage("Are you sure you want to remove this item from your cart?")
         builder.setPositiveButton("Yes") { dialog, _ ->
-            val databaseReference = FirebaseDatabase.getInstance().getReference("Cart")
+            val auth = FirebaseAuth.getInstance()
+            val userId = auth.currentUser!!.uid
+            val databaseReference = FirebaseDatabase.getInstance().getReference("Users").child(userId).child("Cart")
             databaseReference.addListenerForSingleValueEvent(object : ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
                     for (dataSnapshot in snapshot.children) {
@@ -166,12 +174,11 @@ class CartAdapter(private val context: Cart_view, private val cartList: ArrayLis
         }
         builder.show()
     }
-}
-
 class CartViewHolder(view: View) {
     val partNameTextView: TextView = view.findViewById(R.id.partnameTextView)
     val amountTextView: TextView = view.findViewById(R.id.amountTextView)
     val priceTextView: TextView = view.findViewById(R.id.priceTextView)
     val editTextView: TextView = view.findViewById(R.id.edit)
     val removeTextView: TextView = view.findViewById(R.id.remove)
+}
 }
