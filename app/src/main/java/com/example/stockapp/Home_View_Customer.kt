@@ -1,8 +1,8 @@
 package com.example.stockapp
 
-import Products
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.MenuItem
 import android.widget.TextView
 import androidx.appcompat.app.ActionBarDrawerToggle
@@ -41,7 +41,10 @@ class Home_View_Customer : AppCompatActivity() {
             if (!userEmail.isNullOrEmpty()) {
                 profileEmail.text = userEmail
             } else {
+                Log.w("Home_View_Customer", "User email is null or empty")
             }
+        } else {
+            Log.w("Home_View_Customer", "Firebase user is null")
         }
 
         // Initialize ActionBarDrawerToggle
@@ -49,6 +52,7 @@ class Home_View_Customer : AppCompatActivity() {
             supportActionBar?.setDisplayHomeAsUpEnabled(true)
             supportActionBar?.setHomeButtonEnabled(true)
         } else {
+            Log.w("Home_View_Customer", "SupportActionBar is null")
         }
 
         val toggle = ActionBarDrawerToggle(this, drawerLayout, R.string.open_drawer, R.string.close_drawer)
@@ -67,6 +71,9 @@ class Home_View_Customer : AppCompatActivity() {
                     startActivity(cart)
                 }
                 // Handle other items here
+                else -> {
+                    Log.w("Home_View_Customer", "Unknown menu item ID: ${item.itemId}")
+                }
             }
             true
         }
@@ -80,8 +87,13 @@ class Home_View_Customer : AppCompatActivity() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
             android.R.id.home -> {
-                drawerLayout.openDrawer(navView)
-                true
+                if (drawerLayout != null && navView != null) {
+                    drawerLayout.openDrawer(navView)
+                    true
+                } else {
+                    Log.w("Home_View_Customer", "DrawerLayout or NavigationView is null")
+                    false
+                }
             }
             else -> super.onOptionsItemSelected(item)
         }

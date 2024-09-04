@@ -31,9 +31,6 @@
             android:name=".Cart_view"
             android:exported="false" />
         <activity
-            android:name=".Cart_Activity"
-            android:exported="false" />
-        <activity
             android:name=".Add_Item_View"
             android:exported="false" />
         <activity
@@ -41,9 +38,6 @@
             android:exported="false" />
         <activity
             android:name=".Register_view"
-            android:exported="false" />
-        <activity
-            android:name=".Home_view"
             android:exported="false" />
         <activity
             android:name=".MainActivity"
