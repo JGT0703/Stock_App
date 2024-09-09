@@ -1,7 +1,9 @@
 package com.example.stockapp// com.example.stockapp.Products.kt
 import android.app.AlertDialog
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
+import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import android.widget.BaseAdapter
@@ -10,7 +12,10 @@ import android.widget.ImageView
 import android.widget.ListView
 import android.widget.TextView
 import android.widget.Toast
+import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
+import androidx.drawerlayout.widget.DrawerLayout
+import com.google.android.material.navigation.NavigationView
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
@@ -23,12 +28,15 @@ class Products : AppCompatActivity() {
     private lateinit var databaseReference: DatabaseReference
     private lateinit var listView: ListView
     private lateinit var stockList: ArrayList<StockItems>
+    private lateinit var drawerLayout: DrawerLayout
+    private lateinit var toggle: ActionBarDrawerToggle
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_products)
 
         listView = findViewById<ListView>(R.id.product_listview)
+        drawerLayout = findViewById(R.id.drawer_layout)
 
         databaseReference = FirebaseDatabase.getInstance().getReference("Stock")
 
@@ -53,6 +61,37 @@ class Products : AppCompatActivity() {
                 // Handle error
             }
         })
+
+        val navView: NavigationView = findViewById(R.id.nav_view)
+        toggle = ActionBarDrawerToggle(this, drawerLayout, R.string.open_drawer, R.string.close_drawer)
+        drawerLayout.addDrawerListener(toggle)
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        toggle.syncState()
+
+        navView.setNavigationItemSelectedListener {
+            when (it.itemId) {
+                R.id.nav_item1 -> {
+                    val home = Intent(this, Home_View_Customer::class.java)
+                    startActivity(home)
+                }
+                R.id.nav_item2 -> {
+                    val product = Intent(this, Products::class.java)
+                    startActivity(product)
+                }
+                R.id.nav_item3 -> {
+                    val cart = Intent(this, Cart_view::class.java)
+                    startActivity(cart)
+                }
+            }
+            true
+        }
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        if (toggle.onOptionsItemSelected(item)) {
+            return true
+        }
+        return super.onOptionsItemSelected(item)
     }
 }
 
