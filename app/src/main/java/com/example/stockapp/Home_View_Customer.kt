@@ -63,12 +63,16 @@ class Home_View_Customer : AppCompatActivity() {
         navView.setNavigationItemSelectedListener { item ->
             when (item.itemId) {
                 R.id.nav_item1 -> {
-                    val add = Intent(this, Products::class.java)
-                    startActivity(add)
-                }
+                val add = Intent(this, Home_View_Customer::class.java)
+                startActivity(add)
+            }
                 R.id.nav_item2 -> {
-                    val cart = Intent(this, Cart_view::class.java)
+                    val cart = Intent(this, Products::class.java)
                     startActivity(cart)
+                }
+                R.id.nav_item3 -> {
+                    val profile = Intent(this, Cart_view::class.java)
+                    startActivity(profile)
                 }
                 // Handle other items here
                 else -> {
