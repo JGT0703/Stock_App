@@ -3,8 +3,14 @@ package com.example.stockapp
 import android.content.Intent
 import android.os.Bundle
 import android.util.Patterns
+import android.view.View
+import android.widget.ArrayAdapter
 import android.widget.Button
 import android.widget.EditText
+import android.widget.ImageView
+import android.widget.Spinner
+import android.widget.Switch
+import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.google.firebase.auth.FirebaseAuth
@@ -22,6 +28,10 @@ class MainActivity : AppCompatActivity() {
     private lateinit var registerButton: Button
     private lateinit var mAuth: FirebaseAuth
     private lateinit var mDatabase: DatabaseReference
+    private lateinit var logoImageView: ImageView
+    private lateinit var title_TextView: TextView
+    private lateinit var switch1: Switch
+    private lateinit var userTypeSpinner: Spinner
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -29,34 +39,80 @@ class MainActivity : AppCompatActivity() {
 
         emailEditText = findViewById(R.id.editTextText)
         passwordEditText = findViewById(R.id.editTextTextPassword)
-        loginButton = findViewById(R.id.button_click)
-        registerButton = findViewById(R.id.registerBtn)
+
 
         mAuth = FirebaseAuth.getInstance()
         mDatabase = FirebaseDatabase.getInstance().reference
 
+        logoImageView = findViewById(R.id.imageView2)
+        title_TextView = findViewById(R.id.title_TextView)
+        switch1 = findViewById(R.id.switch1)
+        userTypeSpinner = findViewById(R.id.userTypeSpinner)
+
+        userTypeSpinner.visibility = View.GONE
+
+        switch1.setOnCheckedChangeListener { _, isChecked ->
+            if (isChecked) {
+                title_TextView.animate().alpha(0f).setDuration(0).withEndAction {
+                    title_TextView.text = "Sign Up"
+                    title_TextView.animate().alpha(1f).setDuration(500).startDelay = 200
+                    userTypeSpinner.visibility = View.VISIBLE
+                    userTypeSpinner.animate().alpha(1f).setDuration(500).startDelay = 200
+                }
+            } else {
+                title_TextView.animate().alpha(0f).setDuration(0).withEndAction {
+                    title_TextView.text = "Sign In"
+                    title_TextView.animate().alpha(1f).setDuration(500).startDelay = 200
+                    userTypeSpinner.visibility = View.GONE
+                    userTypeSpinner.animate().alpha(1f).setDuration(500).startDelay = 200
+
+                }
+            }
+        }
+        val userTypeArray = arrayOf("Customer", "Admin")
+        val adapter = ArrayAdapter(this, android.R.layout.simple_spinner_item, userTypeArray)
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+        userTypeSpinner.adapter = adapter
+
+        loginButton = findViewById(R.id.loginButton)
+
         loginButton.setOnClickListener {
             val email = emailEditText.text.toString()
             val password = passwordEditText.text.toString()
-
-            if (validateInput(email, password)) {
-                mAuth.signInWithEmailAndPassword(email, password)
-                    .addOnCompleteListener(this) { task ->
-                        if (task.isSuccessful) {
-                            val user = mAuth.currentUser
-                            getUserType(user!!.uid, email, password)
-                        } else {
-                            Toast.makeText(this, "Authentication failed", Toast.LENGTH_SHORT).show()
+            if (switch1.isChecked) {
+                // Register mode
+                if (validateInput(email, password)) {
+                    mAuth.createUserWithEmailAndPassword(email, password)
+                        .addOnCompleteListener(this) { task ->
+                            if (task.isSuccessful) {
+                                val uid = mAuth.currentUser!!.uid
+                                val userType = userTypeSpinner.selectedItem.toString()
+                                mDatabase.child("Users").child(uid).child("User Information").child("userType").setValue(userType)
+                                Toast.makeText(this, "Registration successful", Toast.LENGTH_SHORT).show()
+                                getUserType(uid, email, password)
+                            } else {
+                                Toast.makeText(this, "Registration failed", Toast.LENGTH_SHORT).show()
+                            }
                         }
-                    }
+                }
+            } else {
+                // Login mode
+                if (validateInput(email, password)) {
+                    mAuth.signInWithEmailAndPassword(email, password)
+                        .addOnCompleteListener(this) { task ->
+                            if (task.isSuccessful) {
+                                val uid = mAuth.currentUser!!.uid
+                                getUserType(uid, email, password)
+                            } else {
+                                Toast.makeText(this, "Authentication failed", Toast.LENGTH_SHORT).show()
+                            }
+                        }
+                }
             }
         }
 
-        registerButton.setOnClickListener {
-            val intent = Intent(this@MainActivity, Register_view::class.java)
-            startActivity(intent)
-        }
     }
+
 
     private fun validateInput(email: String, password: String): Boolean {
         if (email.isEmpty() || password.isEmpty()) {
@@ -103,4 +159,5 @@ class MainActivity : AppCompatActivity() {
             }
         })
     }
+
 }

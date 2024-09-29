@@ -1,5 +1,12 @@
 <resources>
-    <string name="app_name">Stock App</string>
+    <string name="app_name">Big Boy Toyz</string>
     <string name="open_drawer">Open Drawer</string>
     <string name="close_drawer">Close Drawer</string>
+    <string name="lets_get_started">Let\'s get started!</string>
+    <string name="email_address">Email address</string>
+    <string name="password">Password</string>
+    <string name="sign_up">Sign up</string>
+    <string name="sign_in">Sign in</string>
+    <string name="welcome_back">Welcome Back</string>
+    <string name="new_account">Lets create a new Account</string>
 </resources>
