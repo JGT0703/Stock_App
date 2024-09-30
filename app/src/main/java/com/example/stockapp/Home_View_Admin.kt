@@ -74,6 +74,10 @@ class Home_View_Admin : AppCompatActivity() {
                     val cart = Intent(this, Cart_view::class.java)
                     startActivity(cart)
                 }
+                R.id.nav_item4 -> {
+                    val report = Intent(this, Report_Page::class.java)
+                    startActivity(report)
+                }
                 // Handle other items here
                 else -> {
                     Log.w("Home_View_Customer", "Unknown menu item ID: ${item.itemId}")
