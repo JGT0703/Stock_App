@@ -208,7 +208,6 @@
         android:layout_height="match_parent"
         android:layout_gravity="start"
         app:menu="@menu/nav_menu"
-        app:headerLayout="@layout/nav_header"
         android:background="@drawable/grey_background2">
 
         <LinearLayout
@@ -226,50 +225,6 @@
                 android:text="Log out"
                 android:textSize="16pt"/>
         </LinearLayout>
-
-        <!-- Header layout for profile information -->
-        <com.google.android.material.navigation.NavigationView
-            android:id="@+id/nav_header"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="#A9A9A9"
-            android:padding="4dp">
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical">
-
-                <!-- Profile picture -->
-                <ImageView
-                    android:id="@+id/profile_picture"
-                    android:layout_width="80dp"
-                    android:layout_height="80dp"
-                    android:src="@drawable/baseline_account_box_24"
-                    android:scaleType="centerCrop"
-                    android:layout_gravity="center_horizontal" />
-
-                <!-- Profile information -->
-                <TextView
-                    android:id="@+id/profile_name"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:textSize="18sp"
-                    android:textStyle="bold"
-                    android:textColor="@color/black"
-                    android:layout_marginTop="8dp" />
-
-                <TextView
-                    android:id="@+id/profile_email"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:textSize="16sp"
-                    android:textColor="@color/black"
-                    android:layout_marginTop="4dp" />
-
-            </LinearLayout>
-
-        </com.google.android.material.navigation.NavigationView>
 
     </com.google.android.material.navigation.NavigationView>
 

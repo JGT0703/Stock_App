@@ -5,11 +5,8 @@
         android:title="Home" />
     <item
         android:id="@+id/nav_item2"
-        android:title="Stock" />
+        android:title="Products" />
     <item
         android:id="@+id/nav_item3"
-        android:title="User Mangament" />
-    <item
-        android:id="@+id/nav_item4"
-        android:title="Report" />
+        android:title="Cart" />
 </menu>

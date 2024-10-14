@@ -82,6 +82,10 @@ class Products : AppCompatActivity() {
                     val cart = Intent(this, Cart_view::class.java)
                     startActivity(cart)
                 }
+                R.id.nav_item4 -> {
+                    val report = Intent(this, ReportPage::class.java)
+                    startActivity(report)
+                }
             }
             true
         }
