@@ -75,7 +75,7 @@ class Home_View_Admin : AppCompatActivity() {
                     startActivity(cart)
                 }
                 R.id.nav_item4 -> {
-                    val report = Intent(this, Report_Page::class.java)
+                    val report = Intent(this, ReportPage::class.java)
                     startActivity(report)
                 }
                 // Handle other items here
