@@ -69,7 +69,7 @@ class MainActivity : AppCompatActivity() {
                 }
             }
         }
-        val userTypeArray = arrayOf("Customer", "Admin")
+        val userTypeArray = arrayOf("Customer", "Request Admin")
         val adapter = ArrayAdapter(this, android.R.layout.simple_spinner_item, userTypeArray)
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         userTypeSpinner.adapter = adapter
