@@ -68,7 +68,7 @@ class Users_View : AppCompatActivity() {
         navView.setNavigationItemSelectedListener { item ->
             when (item.itemId) {
                 R.id.nav_item1 -> {
-                    val home = Intent(this, Home_View_Customer::class.java)
+                    val home = Intent(this, Home_View_Admin::class.java)
                     startActivity(home)
                 }
 
@@ -126,8 +126,8 @@ class Users_View : AppCompatActivity() {
         mDatabase.child("Users").addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
                 for (userSnapshot in dataSnapshot.children) {
-                    val userTypeObject = userSnapshot.child("User  Information").child("userType")
-                    val emailObject = userSnapshot.child("User  Information").child("email")
+                    val userTypeObject = userSnapshot.child("User Information").child("userType")
+                    val emailObject = userSnapshot.child("User Information").child("email")
                     if (userTypeObject.exists() && emailObject.exists()) {
                         val userType = userTypeObject.value as String
                         val email = emailObject.value as String
