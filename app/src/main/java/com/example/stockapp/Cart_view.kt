@@ -9,7 +9,6 @@ import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
-import android.widget.Button
 import android.widget.EditText
 import android.widget.ListView
 import android.widget.TextView
@@ -78,11 +77,6 @@ class Cart_view : AppCompatActivity() {
             }
         })
 
-        val backButton = findViewById<Button>(R.id.continue_button)
-        backButton.setOnClickListener {
-            val intent = Intent(this, Home_View_Customer::class.java)
-            startActivity(intent)
-        }
         // Initialize ActionBarDrawerToggle
         if (supportActionBar != null) {
             supportActionBar?.setDisplayHomeAsUpEnabled(true)
