@@ -26,26 +26,8 @@ class ReportPage : AppCompatActivity() {
         drawerLayout = findViewById(R.id.drawer_layout)
         navView = findViewById(R.id.nav_view)
 
-        // Get the header view and the email text view
-        val headerView = navView.getHeaderView(0)
-        profileEmail = headerView.findViewById(R.id.profile_email)
-        profileName = headerView.findViewById(R.id.profile_name)
-
         // Get the logout text view
         val logoutView = navView.findViewById<TextView>(R.id.logout)
-
-        // Check if Firebase user is not null
-        val firebaseUser = FirebaseAuth.getInstance().currentUser
-        if (firebaseUser != null) {
-            val userEmail = firebaseUser.email
-            if (!userEmail.isNullOrEmpty()) {
-                profileEmail.text = userEmail
-            } else {
-                Log.w("Home_View_Customer", "User email is null or empty")
-            }
-        } else {
-            Log.w("Home_View_Customer", "Firebase user is null")
-        }
 
         // Initialize ActionBarDrawerToggle
         if (supportActionBar != null) {

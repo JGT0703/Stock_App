@@ -10,7 +10,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
-        android:background="@drawable/grey_background2">
+        android:background="@drawable/light_grey_background">
 
         <ListView
             android:id="@+id/product_listview"
@@ -25,8 +25,8 @@
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:layout_gravity="start"
-        app:menu="@menu/nav_menu"
-        android:background="@drawable/grey_background2">
+        app:menu="@menu/cus_nav_menu"
+        android:background="@drawable/light_grey_background">
 
         <LinearLayout
             android:layout_width="match_parent"

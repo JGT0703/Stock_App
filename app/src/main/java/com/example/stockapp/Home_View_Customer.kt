@@ -14,8 +14,6 @@ import com.google.firebase.auth.FirebaseAuth
 class Home_View_Customer : AppCompatActivity() {
     private lateinit var drawerLayout: DrawerLayout
     private lateinit var navView: NavigationView
-    private lateinit var profileEmail: TextView
-    private lateinit var profileName: TextView
     private lateinit var logoutTextView: TextView
 
     override fun onCreate(savedInstanceState: Bundle?) {

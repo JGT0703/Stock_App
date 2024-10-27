@@ -49,7 +49,7 @@ class Home_View_Admin : AppCompatActivity() {
                     startActivity(home)
                 }
                 R.id.nav_item2 -> {
-                    val product = Intent(this, Products::class.java)
+                    val product = Intent(this, Stock_view::class.java)
                     startActivity(product)
                 }
                 R.id.nav_item3 -> {

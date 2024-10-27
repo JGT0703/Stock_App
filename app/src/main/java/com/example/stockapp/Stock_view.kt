@@ -4,6 +4,7 @@ import android.app.AlertDialog
 import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
+import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import android.widget.BaseAdapter
@@ -13,7 +14,10 @@ import android.widget.ImageView
 import android.widget.ListView
 import android.widget.TextView
 import android.widget.Toast
+import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
+import androidx.drawerlayout.widget.DrawerLayout
+import com.google.android.material.navigation.NavigationView
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
@@ -26,17 +30,77 @@ class Stock_view : AppCompatActivity() {
     private lateinit var databaseReference: DatabaseReference
     private lateinit var listView: ListView
     private lateinit var stockList: ArrayList<StockItem>
+    private lateinit var drawerLayout: DrawerLayout
+    private lateinit var toggle: ActionBarDrawerToggle
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_stock_view)
 
         listView = findViewById<ListView>(R.id.listView)
+        drawerLayout = findViewById(R.id.drawer_layout)
 
+        // Initialize Firebase Database
         databaseReference = FirebaseDatabase.getInstance().getReference("Stock")
-
         stockList = ArrayList()
 
+        // Setup Drawer Toggle
+        toggle = ActionBarDrawerToggle(this, drawerLayout, R.string.open_drawer, R.string.close_drawer)
+        drawerLayout.addDrawerListener(toggle)
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        toggle.syncState()
+
+        // Load Stock Data
+        loadStockData()
+
+        // Set up navigation view
+        val navView: NavigationView = findViewById(R.id.nav_view)
+        navView.setNavigationItemSelectedListener { menuItem ->
+            when (menuItem.itemId) {
+                R.id.nav_item1 -> {
+                    // Navigate to Home
+                    startActivity(Intent(this, Home_View_Admin::class.java))
+                }
+                R.id.nav_item2 -> {
+                    // Navigate to Products
+                    startActivity(Intent(this, Stock_view::class.java))
+                }
+                R.id.nav_item3 -> {
+                    // Navigate to Cart
+                    startActivity(Intent(this, Users_View::class.java))
+                }
+                R.id.nav_item4 -> {
+                    // Navigate to Reports
+                    startActivity(Intent(this, ReportPage::class.java))
+                }
+            }
+            drawerLayout.closeDrawers() // Close the drawer after selection
+            true
+        }
+
+        // Back button functionality
+        val backClick = findViewById<Button>(R.id.back_button)
+        backClick.setOnClickListener {
+            val intent = Intent(this, Home_View_Admin::class.java)
+            startActivity(intent)
+        }
+
+        // Add item button functionality
+        val addClick = findViewById<Button>(R.id.add_item)
+        addClick.setOnClickListener {
+            val add = Intent(this, Add_Item_View::class.java)
+            startActivity(add)
+        }
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        if (toggle.onOptionsItemSelected(item)) {
+            return true
+        }
+        return super.onOptionsItemSelected(item)
+    }
+
+    private fun loadStockData() {
         databaseReference.addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 stockList.clear()
@@ -56,17 +120,6 @@ class Stock_view : AppCompatActivity() {
                 // Handle error
             }
         })
-
-        val backClick = findViewById<Button>(R.id.back_button)
-        backClick.setOnClickListener {
-            val intent = Intent(this, Home_View_Admin::class.java)
-            startActivity(intent)
-        }
-        val addClick = findViewById<Button>(R.id.add_item)
-        addClick.setOnClickListener {
-            val add = Intent(this, Add_Item_View::class.java)
-            startActivity(add)
-        }
     }
 }
 
