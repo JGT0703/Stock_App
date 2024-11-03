@@ -49,11 +49,11 @@ class ReportPage : AppCompatActivity() {
                     startActivity(home)
                 }
                 R.id.nav_item2 -> {
-                    val product = Intent(this, Products::class.java)
+                    val product = Intent(this, Stock_view::class.java)
                     startActivity(product)
                 }
                 R.id.nav_item3 -> {
-                    val cart = Intent(this, Cart_view::class.java)
+                    val cart = Intent(this, Users_View::class.java)
                     startActivity(cart)
                 }
                 R.id.nav_item4 -> {

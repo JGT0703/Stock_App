@@ -13,7 +13,6 @@ import android.view.ViewGroup
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.BaseAdapter
-import android.widget.Button
 import android.widget.ListView
 import android.widget.Spinner
 import android.widget.TextView
@@ -73,7 +72,7 @@ class Users_View : AppCompatActivity() {
                 }
 
                 R.id.nav_item2 -> {
-                    val product = Intent(this, Products::class.java)
+                    val product = Intent(this, Stock_view::class.java)
                     startActivity(product)
                 }
 
@@ -115,12 +114,6 @@ class Users_View : AppCompatActivity() {
         adminListView.adapter = adminAdapter
         customerListView.adapter = customerAdapter
         unknownListView.adapter = unknownAdapter
-
-        val backBtn = findViewById<Button>(R.id.back_button)
-        backBtn.setOnClickListener {
-            val back = Intent(this, Home_View_Admin::class.java)
-            startActivity(back)
-        }
 
         // Load users from Firebase
         mDatabase.child("Users").addListenerForSingleValueEvent(object : ValueEventListener {

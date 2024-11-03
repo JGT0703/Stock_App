@@ -9,6 +9,7 @@ import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
+import android.widget.Button
 import android.widget.EditText
 import android.widget.ListView
 import android.widget.TextView
@@ -34,6 +35,7 @@ class Cart_view : AppCompatActivity() {
     private lateinit var drawerLayout: DrawerLayout
     private lateinit var navView: NavigationView
     private lateinit var logoutTextView: TextView
+    private lateinit var button2: Button
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -45,6 +47,12 @@ class Cart_view : AppCompatActivity() {
 
         drawerLayout = findViewById(R.id.drawer_layout)
         navView = findViewById(R.id.nav_view)
+
+        button2 = findViewById(R.id.button2)
+        button2.setOnClickListener {
+            val intent = Intent(this, Home_View_Admin::class.java)
+            startActivity(intent)
+        }
 
         // Get the logout text view
         val logoutView = navView.findViewById<TextView>(R.id.logout)

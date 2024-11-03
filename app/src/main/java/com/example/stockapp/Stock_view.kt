@@ -78,13 +78,6 @@ class Stock_view : AppCompatActivity() {
             true
         }
 
-        // Back button functionality
-        val backClick = findViewById<Button>(R.id.back_button)
-        backClick.setOnClickListener {
-            val intent = Intent(this, Home_View_Admin::class.java)
-            startActivity(intent)
-        }
-
         // Add item button functionality
         val addClick = findViewById<Button>(R.id.add_item)
         addClick.setOnClickListener {
