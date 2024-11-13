@@ -3,6 +3,7 @@ package com.example.stockapp
 import android.content.Intent
 import android.os.Bundle
 import android.util.Patterns
+import android.view.LayoutInflater
 import android.view.View
 import android.widget.ArrayAdapter
 import android.widget.Button
@@ -12,6 +13,7 @@ import android.widget.Spinner
 import android.widget.Switch
 import android.widget.TextView
 import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DataSnapshot
@@ -26,6 +28,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var passwordEditText: EditText
     private lateinit var loginButton: Button
     private lateinit var registerButton: Button
+    private lateinit var resetPasswordButton: Button
     private lateinit var mAuth: FirebaseAuth
     private lateinit var mDatabase: DatabaseReference
     private lateinit var logoImageView: ImageView
@@ -39,7 +42,8 @@ class MainActivity : AppCompatActivity() {
 
         emailEditText = findViewById(R.id.editTextText)
         passwordEditText = findViewById(R.id.editTextTextPassword)
-
+        loginButton = findViewById(R.id.loginButton)
+        resetPasswordButton = findViewById(R.id.forgotPasswordButton)
 
         mAuth = FirebaseAuth.getInstance()
         mDatabase = FirebaseDatabase.getInstance().reference
@@ -65,7 +69,6 @@ class MainActivity : AppCompatActivity() {
                     title_TextView.animate().alpha(1f).setDuration(500).startDelay = 200
                     userTypeSpinner.visibility = View.GONE
                     userTypeSpinner.animate().alpha(1f).setDuration(500).startDelay = 200
-
                 }
             }
         }
@@ -74,13 +77,11 @@ class MainActivity : AppCompatActivity() {
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         userTypeSpinner.adapter = adapter
 
-        loginButton = findViewById(R.id.loginButton)
-
         loginButton.setOnClickListener {
             val email = emailEditText.text.toString()
             val password = passwordEditText.text.toString()
             if (switch1.isChecked) {
-                // Register mode
+                // Register
                 if (validateInput(email, password)) {
                     mAuth.createUserWithEmailAndPassword(email, password)
                         .addOnCompleteListener(this) { task ->
@@ -96,7 +97,7 @@ class MainActivity : AppCompatActivity() {
                         }
                 }
             } else {
-                // Login mode
+                //login
                 if (validateInput(email, password)) {
                     mAuth.signInWithEmailAndPassword(email, password)
                         .addOnCompleteListener(this) { task ->
@@ -111,8 +112,11 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
+        //Reset Password button listener
+        resetPasswordButton.setOnClickListener {
+            showResetPasswordDialog()
+        }
     }
-
 
     private fun validateInput(email: String, password: String): Boolean {
         if (email.isEmpty() || password.isEmpty()) {
@@ -135,16 +139,12 @@ class MainActivity : AppCompatActivity() {
                     val userTypeObject = dataSnapshot.child("userType")
                     if (userTypeObject.exists()) {
                         val userType = userTypeObject.value as String
-                        if (userType != null) {
-                            if (userType == "Admin") {
-                                val intent = Intent(this@MainActivity, Home_View_Admin::class.java)
-                                startActivity(intent)
-                            } else if (userType == "Customer") {
-                                val intent = Intent(this@MainActivity, Home_View_Customer::class.java)
-                                startActivity(intent)
-                            }
-                        } else {
-                            Toast.makeText(this@MainActivity, "User type not found", Toast.LENGTH_SHORT).show()
+                        if (userType == "Admin") {
+                            val intent = Intent(this@MainActivity, Home_View_Admin::class.java)
+                            startActivity(intent)
+                        } else if (userType == "Customer") {
+                            val intent = Intent(this@MainActivity, Home_View_Customer::class.java)
+                            startActivity(intent)
                         }
                     } else {
                         Toast.makeText(this@MainActivity, "User type not found", Toast.LENGTH_SHORT).show()
@@ -160,4 +160,35 @@ class MainActivity : AppCompatActivity() {
         })
     }
 
+    //Reset Password dialog
+    private fun showResetPasswordDialog() {
+        val dialogView = LayoutInflater.from(this).inflate(R.layout.reset_password_dialog, null)
+        val emailEditText = dialogView.findViewById<EditText>(R.id.emailEditText)
+        val sendButton = dialogView.findViewById<Button>(R.id.sendButton)
+
+        val dialog = AlertDialog.Builder(this)
+            .setTitle("Reset Password")
+            .setView(dialogView)
+            .setNegativeButton("Cancel") { dialog, _ -> dialog.dismiss() }
+            .create()
+
+        sendButton.setOnClickListener {
+            val email = emailEditText.text.toString().trim()
+            if (email.isEmpty()) {
+                Toast.makeText(this, "Please enter your email address", Toast.LENGTH_SHORT).show()
+            } else {
+                mAuth.sendPasswordResetEmail(email)
+                    .addOnCompleteListener { task ->
+                        if (task.isSuccessful) {
+                            Toast.makeText(this, "Password reset email sent", Toast.LENGTH_SHORT).show()
+                            dialog.dismiss()
+                        } else {
+                            Toast.makeText(this, "Error sending reset email", Toast.LENGTH_SHORT).show()
+                        }
+                    }
+            }
+        }
+
+        dialog.show()
+    }
 }

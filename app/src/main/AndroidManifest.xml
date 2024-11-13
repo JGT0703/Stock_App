@@ -13,6 +13,12 @@
         android:theme="@style/Theme.StockApp"
         tools:targetApi="31">
         <activity
+            android:name=".Orders_List"
+            android:exported="false" />
+        <activity
+            android:name=".Cus_Order_View"
+            android:exported="false" />
+        <activity
             android:name=".ReportPage"
             android:exported="false" />
         <activity

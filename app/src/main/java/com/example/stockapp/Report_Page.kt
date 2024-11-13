@@ -4,6 +4,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.MenuItem
+import android.widget.Button
 import android.widget.TextView
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
@@ -16,12 +17,18 @@ private lateinit var navView: NavigationView
 private lateinit var profileEmail: TextView
 private lateinit var profileName: TextView
 private lateinit var logoutTextView: TextView
+private lateinit var viewOrdersButton: Button
 
 class ReportPage : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_report_page)
 
+        viewOrdersButton = findViewById(R.id.view_orders_button)
+        viewOrdersButton.setOnClickListener {
+            val intent = Intent(this, Order_View::class.java)
+            startActivity(intent)
+        }
         // Initialize views
         drawerLayout = findViewById(R.id.drawer_layout)
         navView = findViewById(R.id.nav_view)
@@ -95,4 +102,5 @@ class ReportPage : AppCompatActivity() {
         startActivity(intent)
         finish()
     }
+
 }

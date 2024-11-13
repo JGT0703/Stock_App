@@ -54,6 +54,7 @@ class Home_View_Customer : AppCompatActivity() {
                     val cart = Intent(this, Cart_view::class.java)
                     startActivity(cart)
                 }
+
                 // Handle other items here
                 else -> {
                     Log.w("Home_View_Customer", "Unknown menu item ID: ${item.itemId}")

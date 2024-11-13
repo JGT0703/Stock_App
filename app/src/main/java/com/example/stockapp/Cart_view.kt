@@ -35,7 +35,7 @@ class Cart_view : AppCompatActivity() {
     private lateinit var drawerLayout: DrawerLayout
     private lateinit var navView: NavigationView
     private lateinit var logoutTextView: TextView
-    private lateinit var button2: Button
+    private lateinit var checkoutButton: Button
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -48,10 +48,9 @@ class Cart_view : AppCompatActivity() {
         drawerLayout = findViewById(R.id.drawer_layout)
         navView = findViewById(R.id.nav_view)
 
-        button2 = findViewById(R.id.button2)
-        button2.setOnClickListener {
-            val intent = Intent(this, Home_View_Admin::class.java)
-            startActivity(intent)
+        checkoutButton = findViewById(R.id.button2)
+        checkoutButton.setOnClickListener {
+            saveCartItemsToDatabase()
         }
 
         // Get the logout text view
@@ -71,7 +70,8 @@ class Cart_view : AppCompatActivity() {
                     val partName = dataSnapshot.child("partName").value.toString()
                     val amount = dataSnapshot.child("amount").value.toString()
                     val price = dataSnapshot.child("price").value.toString()
-                    val cartItem = CartItem(partName, "", amount, price)
+                    val brandName = dataSnapshot.child("brandName").value.toString()
+                    val cartItem = CartItem(partName, brandName, amount, price)
                     cartList.add(cartItem)
                     totalPrice += cartItem.price.toDouble() * cartItem.amount.toInt()
                 }
@@ -81,7 +81,7 @@ class Cart_view : AppCompatActivity() {
             }
 
             override fun onCancelled(error: DatabaseError) {
-                Toast.makeText(this@Cart_view, "Error: $error", Toast.LENGTH_SHORT). show()
+                Toast.makeText(this@Cart_view, "Error: $error", Toast.LENGTH_SHORT).show()
             }
         })
 
@@ -126,6 +126,49 @@ class Cart_view : AppCompatActivity() {
         }
     }
 
+    private fun saveCartItemsToDatabase() {
+        // Reference to the items database
+        val itemsDatabaseReference = FirebaseDatabase.getInstance().getReference("Orders")
+
+        // Loop through the cartList and add each item to the "items" child
+        for (cartItem in cartList) {
+            val itemEntry = mapOf(
+                "partName" to cartItem.partName,
+                "amount" to cartItem.amount,
+                "price" to cartItem.price,
+                "brandName" to cartItem.brandName
+            )
+
+            // Generate a unique key for each item
+            itemsDatabaseReference.push().setValue(itemEntry)
+                .addOnSuccessListener {
+                    // Clear the cart after saving
+                    clearCart()
+                    Toast.makeText(this@Cart_view, "Items added successfully!", Toast.LENGTH_SHORT).show()
+                    // Redirect to home view
+                    val intent = Intent(this@Cart_view, Home_View_Customer::class.java)
+                    startActivity(intent)
+                    finish()
+                }
+                .addOnFailureListener { error ->
+                    Toast.makeText(this@Cart_view, "Error saving item: $error", Toast.LENGTH_SHORT).show()
+                }
+        }
+    }
+
+    private fun clearCart() {
+        val userId = auth.currentUser !!.uid
+        val databaseReference = FirebaseDatabase.getInstance().getReference("Users").child(userId).child("Cart")
+
+        databaseReference.removeValue().addOnSuccessListener {
+            cartList.clear()
+            totalPriceTextView.text = "Total: R 0.00"
+            (listView.adapter as CartAdapter).notifyDataSetChanged()
+        }.addOnFailureListener { error ->
+            Toast.makeText(this, "Error clearing cart: $error", Toast.LENGTH_SHORT).show()
+        }
+    }
+
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
             android.R.id.home -> {
@@ -167,15 +210,16 @@ class CartAdapter(private val context: Cart_view, private val cartList: ArrayLis
         val cartItem = getItem(position)
 
         viewHolder.partNameTextView.text = cartItem!!.partName
-        viewHolder.amountTextView.text = cartItem!!.amount
-        viewHolder.priceTextView.text = cartItem!!.price
+        viewHolder.amountTextView.text = cartItem.amount
+        viewHolder.priceTextView.text = cartItem.price
+        viewHolder.brandnameTextView.text = cartItem.brandName
 
         viewHolder.editTextView.setOnClickListener {
-            showEditAmountDialog(cartItem!!, viewHolder.amountTextView)
+            showEditAmountDialog(cartItem, viewHolder.amountTextView)
         }
 
         viewHolder.removeTextView.setOnClickListener {
-            removeItemFromCart(cartItem!!)
+            removeItemFromCart(cartItem)
         }
 
         return view
@@ -195,7 +239,7 @@ class CartAdapter(private val context: Cart_view, private val cartList: ArrayLis
             notifyDataSetChanged()
 
             val auth = FirebaseAuth.getInstance()
-            val userId = auth.currentUser!!.uid
+            val userId = auth.currentUser !!.uid
             val databaseReference = FirebaseDatabase.getInstance().getReference("Users").child(userId).child("Cart")
             databaseReference.addListenerForSingleValueEvent(object : ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
@@ -205,7 +249,7 @@ class CartAdapter(private val context: Cart_view, private val cartList: ArrayLis
                             break
                         }
                     }
-                    val intent = Intent(context, Cart_view::class.java)
+                    val intent = Intent(context, Cart_view::class.java )
                     context.startActivity(intent)
                 }
 
@@ -227,7 +271,7 @@ class CartAdapter(private val context: Cart_view, private val cartList: ArrayLis
         builder.setMessage("Are you sure you want to remove this item from your cart?")
         builder.setPositiveButton("Yes") { dialog, _ ->
             val auth = FirebaseAuth.getInstance()
-            val userId = auth.currentUser!!.uid
+            val userId = auth.currentUser  !!.uid
             val databaseReference = FirebaseDatabase.getInstance().getReference("Users").child(userId).child("Cart")
             databaseReference.addListenerForSingleValueEvent(object : ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
@@ -252,11 +296,13 @@ class CartAdapter(private val context: Cart_view, private val cartList: ArrayLis
         }
         builder.show()
     }
+}
+
 class CartViewHolder(view: View) {
     val partNameTextView: TextView = view.findViewById(R.id.partnameTextView)
     val amountTextView: TextView = view.findViewById(R.id.amountTextView)
     val priceTextView: TextView = view.findViewById(R.id.priceTextView)
+    val brandnameTextView: TextView = view.findViewById(R.id.BrandnameText)
     val editTextView: TextView = view.findViewById(R.id.edit)
     val removeTextView: TextView = view.findViewById(R.id.remove)
-}
 }

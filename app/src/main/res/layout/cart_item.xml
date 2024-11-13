@@ -12,7 +12,7 @@
         android:orientation="vertical">
 
         <LinearLayout
-            android:layout_width="match_parent"
+            android:layout_width="250dp"
             android:layout_height="wrap_content"
             android:orientation="horizontal">
 
@@ -25,16 +25,38 @@
 
             <TextView
                 android:id="@+id/partnameTextView"
-                android:layout_width="0dp"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
                 android:textSize="18sp"
-                android:textStyle="bold" />
+                android:textStyle="bold"
+                android:layout_gravity="start" />
 
         </LinearLayout>
 
         <LinearLayout
-            android:layout_width="match_parent"
+            android:layout_width="250dp"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:textSize="18sp"
+                android:text="Brand Name:" />
+
+            <TextView
+                android:id="@+id/BrandnameText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:layout_gravity="start" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="250dp"
             android:layout_height="wrap_content"
             android:orientation="horizontal">
 
@@ -47,15 +69,15 @@
 
             <TextView
                 android:id="@+id/amountTextView"
-                android:layout_width="0dp"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:textSize="18sp" />
+                android:textSize="18sp"
+                android:layout_gravity="start" />
 
         </LinearLayout>
 
         <LinearLayout
-            android:layout_width="match_parent"
+            android:layout_width="250dp"
             android:layout_height="wrap_content"
             android:orientation="horizontal">
 
@@ -68,10 +90,10 @@
 
             <TextView
                 android:id="@+id/priceTextView"
-                android:layout_width="0dp"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:textSize="18sp" />
+                android:textSize="18sp"
+                android:layout_gravity="start" />
 
         </LinearLayout>
 
@@ -85,7 +107,7 @@
         <TextView
             android:id="@+id/edit"
             android:layout_width="match_parent"
-            android:layout_height="35dp"
+            android:layout_height="48dp"
             android:text="Edit"
             android:gravity="center"
             android:textSize="18sp"
@@ -94,11 +116,11 @@
         <TextView
             android:id="@+id/remove"
             android:layout_width="match_parent"
-            android:layout_height="37dp"
-            android:text="Remove"
+            android:layout_height="48dp"
             android:gravity="center"
-            android:textSize="18sp"
-            android:textAlignment="center"/>
+            android:text="Remove"
+            android:textAlignment="center"
+            android:textSize="18sp" />
 
     </LinearLayout>
 
