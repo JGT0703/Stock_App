@@ -118,6 +118,13 @@ class Users_View : AppCompatActivity() {
         // Load users from Firebase
         mDatabase.child("Users").addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
+                Log.d("Users_View", "Loading users from Firebase...")
+
+                // Clear the lists before adding new items
+                adminList.clear()
+                customerList.clear()
+                unknownList.clear()
+
                 for (userSnapshot in dataSnapshot.children) {
                     val userTypeObject = userSnapshot.child("User Information").child("userType")
                     val emailObject = userSnapshot.child("User Information").child("email")
@@ -127,13 +134,27 @@ class Users_View : AppCompatActivity() {
                         if (userType != null && email != null) {
                             val user = User(email, userType)
                             when (userType) {
-                                "Admin" -> adminList.add(user)
-                                "Customer" -> customerList.add(user)
-                                else -> unknownList.add(user)
+                                "Admin" -> {
+                                    adminList.add(user)
+                                    Log.d("Users_View", "Added Admin: $email")
+                                }
+                                "Customer" -> {
+                                    customerList.add(user)
+                                    Log.d("Users_View", "Added Customer: $email")
+                                }
+                                else -> {
+                                    unknownList.add(user)
+                                    Log.d("Users_View", "Added Unknown User: $email")
+                                }
                             }
                         }
                     }
                 }
+
+                // Log the counts of each list
+                Log.d("Users_View", "Admin count: ${adminList.size}")
+                Log.d("Users_View ", "Customer count: ${customerList.size}")
+                Log.d("Users_View", "Unknown count: ${unknownList.size}")
 
                 adminAdapter.notifyDataSetChanged()
                 customerAdapter.notifyDataSetChanged()
@@ -141,7 +162,7 @@ class Users_View : AppCompatActivity() {
             }
 
             override fun onCancelled(databaseError: DatabaseError) {
-                // Handle database error
+                Log.e("Users_View", "Error loading users: ${databaseError.message}")
             }
         })
     }
@@ -209,7 +230,7 @@ class Users_View : AppCompatActivity() {
                 val dialogFragment = UserDialogFragment.newInstance(user)
                 dialogFragment.show(
                     (context as AppCompatActivity).supportFragmentManager,
-                    "UserDialogFragment"
+                    "User DialogFragment"
                 )
             }
 
@@ -278,37 +299,37 @@ class Users_View : AppCompatActivity() {
                         mDatabase.child("Users").orderByChild("User Information/email")
                             .equalTo(userEmail)
                             .addListenerForSingleValueEvent(object : ValueEventListener {
-                                override fun onDataChange(dataSnapshot: DataSnapshot) {
-                                    for (userSnapshot in dataSnapshot.children) {
-                                        val uid = userSnapshot.key
+                            override fun onDataChange(dataSnapshot: DataSnapshot) {
+                                for (userSnapshot in dataSnapshot.children) {
+                                    val uid = userSnapshot.key
 
-                                        // Update the user's userType in the database
-                                        mDatabase.child("Users").child(uid!!)
-                                            .child("User Information").child("userType")
-                                            .setValue(selectedUserType)
-                                            .addOnCompleteListener { task ->
-                                                if (task.isSuccessful) {
-                                                    user?.userType = selectedUserType
-                                                    userTypeTextView.text = selectedUserType
+                                    // Update the user's userType in the database
+                                    mDatabase.child("Users").child(uid!!)
+                                        .child("User Information").child("userType")
+                                        .setValue(selectedUserType)
+                                        .addOnCompleteListener { task ->
+                                            if (task.isSuccessful) {
+                                                user?.userType = selectedUserType
+                                                        userTypeTextView.text = selectedUserType
 
-                                                    val intent =
-                                                        Intent(context, Users_View::class.java)
-                                                    context!!.startActivity(intent)
-                                                } else {
-                                                    Toast.makeText(
-                                                        requireActivity(),
-                                                        "Failed to update user type",
-                                                        Toast.LENGTH_SHORT
-                                                    ).show()
-                                                }
+                                                val intent =
+                                                    Intent(context, Users_View::class.java)
+                                                context!!.startActivity(intent)
+                                            } else {
+                                                Toast.makeText(
+                                                    requireActivity(),
+                                                    "Failed to update user type",
+                                                    Toast.LENGTH_SHORT
+                                                ).show()
                                             }
-                                    }
+                                        }
                                 }
+                            }
 
-                                override fun onCancelled(databaseError: DatabaseError) {
-                                    // Handle database error
-                                }
-                            })
+                            override fun onCancelled(databaseError: DatabaseError) {
+                                Log.e("User DialogFragment", "Error finding user UID: ${databaseError.message}")
+                            }
+                        })
                     }
                 }
 
