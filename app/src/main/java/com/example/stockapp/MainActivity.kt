@@ -35,6 +35,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var title_TextView: TextView
     private lateinit var switch1: Switch
     private lateinit var userTypeSpinner: Spinner
+    private lateinit var usernameText:EditText
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -44,6 +45,7 @@ class MainActivity : AppCompatActivity() {
         passwordEditText = findViewById(R.id.editTextTextPassword)
         loginButton = findViewById(R.id.loginButton)
         resetPasswordButton = findViewById(R.id.forgotPasswordButton)
+        usernameText = findViewById(R.id.editTextTextUsername)
 
         mAuth = FirebaseAuth.getInstance()
         mDatabase = FirebaseDatabase.getInstance().reference
@@ -54,6 +56,7 @@ class MainActivity : AppCompatActivity() {
         userTypeSpinner = findViewById(R.id.userTypeSpinner)
 
         userTypeSpinner.visibility = View.GONE
+        usernameText.visibility = View.GONE
 
         switch1.setOnCheckedChangeListener { _, isChecked ->
             if (isChecked) {
@@ -63,6 +66,7 @@ class MainActivity : AppCompatActivity() {
                     userTypeSpinner.visibility = View.VISIBLE
                     userTypeSpinner.animate().alpha(1f).setDuration(500).startDelay = 200
                     resetPasswordButton.visibility = View.GONE
+                    usernameText.visibility = View.VISIBLE
                     // Change button text to "Create Account"
                     loginButton.text = "Create Account"
                 }
@@ -73,6 +77,7 @@ class MainActivity : AppCompatActivity() {
                     userTypeSpinner.visibility = View.GONE
                     userTypeSpinner.animate().alpha(1f).setDuration(500).startDelay = 200
                     resetPasswordButton.visibility = View.VISIBLE
+                    usernameText.visibility = View.GONE
                     // Change button text back to "Login"
                     loginButton.text = "Login"
                 }
@@ -87,6 +92,7 @@ class MainActivity : AppCompatActivity() {
         loginButton.setOnClickListener {
             val email = emailEditText.text.toString()
             val password = passwordEditText.text.toString()
+            val username = usernameText.text.toString()
             if (switch1.isChecked) {
                 // Register
                 if (validateInput(email, password)) {
@@ -99,7 +105,8 @@ class MainActivity : AppCompatActivity() {
                             // Create a map to hold user information
                             val userInfo = mapOf(
                                 "userType" to userType,
-                                "email" to email
+                                "email" to email,
+                                "username" to username
                             )
 
                             // Save user information to the database
@@ -117,6 +124,8 @@ class MainActivity : AppCompatActivity() {
                                         switch1.isChecked = false
                                         title_TextView.text = "Sign In"
                                         userTypeSpinner.visibility = View.GONE
+                                        usernameText.visibility = View.GONE
+                                        resetPasswordButton.visibility = View.VISIBLE
 
                                         // Optionally clear the input fields emailEditText.text.clear()
                                         passwordEditText.text.clear()

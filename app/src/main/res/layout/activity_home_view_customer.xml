@@ -29,7 +29,8 @@
                 android:layout_height="120dp"
                 android:scaleType="centerInside"
                 android:src="@drawable/logo_icon"
-                android:contentDescription="App Logo" />
+                android:contentDescription="App Logo"
+                android:background="@drawable/light_grey_background"/>
         </androidx.cardview.widget.CardView>
 
         <!-- Featured Car Parts Section -->
@@ -49,7 +50,7 @@
             android:layout_marginBottom="8dp"
             app:cardCornerRadius="8dp"
             app:cardElevation="4dp"
-            android:background="#FFFFFF">
+            android:background="@drawable/light_grey_background">
 
             <RelativeLayout
                 android:layout_width="match_parent"
