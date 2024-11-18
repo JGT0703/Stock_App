@@ -36,6 +36,8 @@ class Cart_view : AppCompatActivity() {
     private lateinit var navView: NavigationView
     private lateinit var logoutTextView: TextView
     private lateinit var checkoutButton: Button
+    private lateinit var profileEmail: TextView
+    private lateinit var profileName: TextView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -47,6 +49,12 @@ class Cart_view : AppCompatActivity() {
 
         drawerLayout = findViewById(R.id.drawer_layout)
         navView = findViewById(R.id.nav_view)
+
+        val headerView = navView.getHeaderView(0)
+        profileName = headerView.findViewById(R.id.profile_name)
+        profileEmail = headerView.findViewById(R.id.profile_email)
+
+        loadUserInfo()
 
         checkoutButton = findViewById(R.id.button2)
         checkoutButton.setOnClickListener {
@@ -123,6 +131,44 @@ class Cart_view : AppCompatActivity() {
         // Set logout text view click listener
         logoutView.setOnClickListener {
             logout()
+        }
+    }
+
+    private fun loadUserInfo() {
+        val user = FirebaseAuth.getInstance().currentUser
+        if (user != null) {
+            // Get a reference to the Firebase Database
+            val database = FirebaseDatabase.getInstance()
+            val userId = user.uid
+
+            // Reference to the user's information in the database
+            val userRef = database.getReference("Users").child(userId).child("User Information")
+
+            // Fetch user information from the database
+            userRef.get().addOnCompleteListener { task ->
+                if (task.isSuccessful) {
+                    val dataSnapshot = task.result
+                    if (dataSnapshot.exists()) {
+                        // Assuming the user information is stored as a Map
+                        val name = dataSnapshot.child("username").getValue(String::class.java)
+                        val email = dataSnapshot.child("email").getValue(String::class.java)
+
+                        // Update the UI with the retrieved information
+                        profileName.text = name ?: "No Name"
+                        profileEmail.text = email ?: "No Email"
+                    } else {
+                        profileName.text = "No Name"
+                        profileEmail.text = "No Email"
+                    }
+                } else {
+                    Log.e("Home_View_Admin", "Error getting user info", task.exception)
+                    profileName.text = "No Name"
+                    profileEmail.text = "No Email"
+                }
+            }
+        } else {
+            profileName.text = "No Name"
+            profileEmail.text = "No Email"
         }
     }
 

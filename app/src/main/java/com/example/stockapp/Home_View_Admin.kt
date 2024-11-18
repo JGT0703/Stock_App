@@ -50,7 +50,7 @@ class Home_View_Admin : AppCompatActivity() {
         navView.setNavigationItemSelectedListener { item ->
             when (item.itemId) {
                 R.id.nav_item1 -> {
-                    startActivity(Intent(this, Home_View_Customer::class.java))
+                    startActivity(Intent(this, Home_View_Admin::class.java))
                 }
                 R.id.nav_item2 -> {
                     startActivity(Intent(this, Stock_view::class.java))
